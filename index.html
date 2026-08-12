@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>It's a Dog's World</title>
+<style>
+:root{--ink:#243224;--muted:#687568;--panel:#ffffffcf;--line:#d8e4d5;--green:#83bd58}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:ui-rounded,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}
+body{background:linear-gradient(#ccecff 0 47%,#9fd075 47% 100%);overflow-x:hidden}
+.wrap{max-width:1180px;margin:auto;padding:28px 18px 40px}h1{margin:0;font-size:clamp(30px,5vw,56px);letter-spacing:-.04em}.sub{max-width:780px;line-height:1.5;color:#425442}
+.grid{display:grid;grid-template-columns:330px 1fr;gap:18px;margin-top:22px}@media(max-width:840px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--panel);backdrop-filter:blur(14px);border:1px solid #ffffffbb;border-radius:24px;box-shadow:0 18px 50px rgba(37,67,37,.16)}
+.controls{padding:18px}.drop{display:block;border:2px dashed #9db794;border-radius:18px;background:#f8fff5;padding:20px;text-align:center;cursor:pointer}.drop strong{display:block;font-size:18px;margin-bottom:6px}.drop small{color:var(--muted)}input[type=file]{display:none}
+.preview{margin-top:12px;display:none;background:white;border-radius:14px;padding:8px;border:1px solid var(--line)}.preview img{width:100%;max-height:180px;object-fit:contain;border-radius:10px;display:block}
+.label{margin-top:18px;margin-bottom:8px;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}button{border:1px solid var(--line);border-radius:12px;background:white;padding:10px 12px;font:inherit;cursor:pointer}button.active,button.primary{background:#29432b;color:white;border-color:#29432b}.primary{width:100%;margin-top:14px}.tiny{font-size:12px;color:var(--muted);line-height:1.45;margin-top:12px}
+.stage{position:relative;min-height:680px;overflow:hidden;background:linear-gradient(#bee7ff 0 52%,#86bf59 52% 100%)}#scene{position:absolute;inset:0}.note{position:absolute;right:18px;top:18px;width:190px;background:#fffbe8;border:1px solid #eadca7;border-radius:14px;padding:12px;transform:rotate(1.5deg);z-index:2;box-shadow:0 10px 24px rgba(80,70,30,.11)}.note input,.note textarea{width:100%;border:0;outline:none;background:transparent;font:inherit;color:#4c4737}.note input{font-size:12px;font-weight:700;margin-bottom:6px}.note textarea{min-height:76px;resize:none;font-size:13px}.privacy{font-size:10px;color:#8c8262}.status{position:absolute;left:18px;bottom:18px;background:#ffffffd8;border-radius:999px;padding:9px 12px;font-size:12px;color:#4d604d;z-index:2}.hint{position:absolute;left:18px;top:18px;background:#ffffffd0;border-radius:999px;padding:9px 12px;font-size:12px;z-index:2}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>It's a Dog's World</h1>
+<p class="sub">Upload a drawing. The prototype turns the visible artwork into a real displaced 3D surface while preserving the drawing itself, then lets you test safe idle motion.</p>
+<div class="grid">
+<aside class="panel controls">
+<label class="drop" for="file"><strong>Upload dog drawing</strong><small>PNG, JPG, WEBP — plain background works best</small></label>
+<input id="file" type="file" accept="image/*" />
+<div class="preview" id="preview"><img id="previewImg" alt="drawing preview"></div>
+<button class="primary" id="generate" disabled>Generate 3D preview</button>
+<div class="label">Idle motion</div>
+<div class="seg" id="idles"><button class="active" data-idle="bob">Gentle bob</button><button data-idle="sway">Soft sway</button><button data-idle="breathe">Breathe</button><button data-idle="still">Still</button></div>
+<div class="tiny">This is intentionally conservative: no automatic walking or running. The art stays the ground truth.</div>
+</aside>
+<main class="panel stage">
+<div id="scene"></div>
+<div class="hint">Drag to rotate · scroll/pinch to zoom</div>
+<div class="note"><input id="date"><textarea id="note" placeholder="Private note…"></textarea><div class="privacy">Stored only in this browser in this prototype. It is not analysed.</div></div>
+<div class="status" id="status">Upload a drawing to begin.</div>
+</main>
+</div>
+</div>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.169.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.169.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+
+const host=document.getElementById('scene'),file=document.getElementById('file'),generate=document.getElementById('generate'),preview=document.getElementById('preview'),previewImg=document.getElementById('previewImg'),status=document.getElementById('status');
+const date=document.getElementById('date'),note=document.getElementById('note');date.value=new Date().toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});note.value=localStorage.getItem('dog-note')||'';note.addEventListener('input',()=>localStorage.setItem('dog-note',note.value));
+let selectedFile=null,idle='bob',dogGroup=null,dogMesh=null,start=performance.now();
+const scene=new THREE.Scene();scene.fog=new THREE.Fog(0xc9ebff,5,12);
+const camera=new THREE.PerspectiveCamera(42,1,.1,100);camera.position.set(0,1.1,4.5);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;host.appendChild(renderer.domElement);
+const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.target.set(0,.35,0);controls.minDistance=2.2;controls.maxDistance=7;
+scene.add(new THREE.HemisphereLight(0xfff6d1,0x54794b,2.0));const sun=new THREE.DirectionalLight(0xfff2c2,3.1);sun.position.set(3,6,4);sun.castShadow=true;scene.add(sun);
+const ground=new THREE.Mesh(new THREE.SphereGeometry(6,64,32,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0x78b74f,roughness:1}));ground.scale.y=.35;ground.position.y=-1.85;ground.receiveShadow=true;scene.add(ground);
+for(let i=0;i<90;i++){const g=new THREE.Group();const stem=new THREE.Mesh(new THREE.CylinderGeometry(.008,.012,.16,5),new THREE.MeshStandardMaterial({color:0x557c3e}));stem.position.y=.08;g.add(stem);const petal=new THREE.Mesh(new THREE.SphereGeometry(.028,6,5),new THREE.MeshStandardMaterial({color:[0xffffff,0xffdc69,0xf4b3cf][i%3]}));petal.scale.set(1.8,.5,1.2);petal.position.y=.18;g.add(petal);const a=Math.random()*Math.PI*2,r=.9+Math.random()*4.4;g.position.set(Math.cos(a)*r,-.98+Math.random()*.08,Math.sin(a)*r-1.1);scene.add(g)}
+function resize(){const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();
+file.addEventListener('change',()=>{selectedFile=file.files[0]||null;generate.disabled=!selectedFile;if(selectedFile){previewImg.src=URL.createObjectURL(selectedFile);preview.style.display='block';status.textContent='Ready to generate.'}});
+document.getElementById('idles').addEventListener('click',e=>{const b=e.target.closest('button[data-idle]');if(!b)return;document.querySelectorAll('#idles button').forEach(x=>x.classList.remove('active'));b.classList.add('active');idle=b.dataset.idle});
+function loadImage(f){return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=reject;img.src=URL.createObjectURL(f)})}
+function makeAssets(img){const S=96,c=document.createElement('canvas');c.width=S;c.height=S;const x=c.getContext('2d',{willReadFrequently:true});x.fillStyle='white';x.fillRect(0,0,S,S);const scale=Math.min(S/img.width,S/img.height),w=img.width*scale,h=img.height*scale;x.drawImage(img,(S-w)/2,(S-h)/2,w,h);const d=x.getImageData(0,0,S,S),p=d.data;const corners=[[2,2],[S-3,2],[2,S-3],[S-3,S-3]].map(([cx,cy])=>{const i=(cy*S+cx)*4;return [p[i],p[i+1],p[i+2]]});const bg=corners.reduce((a,v)=>a.map((n,j)=>n+v[j]),[0,0,0]).map(n=>n/corners.length);const alpha=new Uint8ClampedArray(S*S);const depth=new Float32Array(S*S);for(let i=0;i<S*S;i++){const r=p[i*4],g=p[i*4+1],b=p[i*4+2];const dist=Math.hypot(r-bg[0],g-bg[1],b-bg[2]);const a=THREE.MathUtils.clamp((dist-14)/80,0,1);alpha[i]=Math.round(a*255);const lum=(r+g+b)/765;depth[i]=a*(.12+.18*(1-lum));p[i*4+3]=alpha[i]}x.putImageData(d,0,0);const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;tex.needsUpdate=true;return{tex,depth,S}}
+function buildDog({tex,depth,S}){if(dogGroup)scene.remove(dogGroup);dogGroup=new THREE.Group();const geo=new THREE.PlaneGeometry(2.35,2.35,S-1,S-1);const pos=geo.attributes.position;for(let i=0;i<pos.count;i++){const ix=i%S,iy=Math.floor(i/S);const idx=(S-1-iy)*S+ix;pos.setZ(i,depth[idx]||0)}pos.needsUpdate=true;geo.computeVertexNormals();const mat=new THREE.MeshStandardMaterial({map:tex,transparent:true,alphaTest:.08,side:THREE.DoubleSide,roughness:.9,metalness:0});dogMesh=new THREE.Mesh(geo,mat);dogMesh.castShadow=true;dogMesh.receiveShadow=true;dogMesh.rotation.x=-.05;dogGroup.add(dogMesh);dogGroup.position.y=.25;scene.add(dogGroup);controls.target.set(0,.25,0);status.textContent='3D surface generated. Rotate it and try the idle modes.'}
+generate.addEventListener('click',async()=>{if(!selectedFile)return;generate.disabled=true;status.textContent='Generating 3D surface…';try{const img=await loadImage(selectedFile);buildDog(makeAssets(img))}catch(e){console.error(e);status.textContent='Could not generate from this image.'}finally{generate.disabled=false}});
+function animate(t){requestAnimationFrame(animate);controls.update();if(dogGroup){const s=(t-start)/1000;if(idle==='bob'){dogGroup.position.y=.25+Math.sin(s*2.0)*.055;dogGroup.rotation.z=0}else if(idle==='sway'){dogGroup.position.y=.25;dogGroup.rotation.z=Math.sin(s*1.8)*.035}else if(idle==='breathe'){dogGroup.position.y=.25;const k=1+Math.sin(s*2.1)*.018;dogGroup.scale.set(k,k,k);dogGroup.rotation.z=0}else{dogGroup.position.y=.25;dogGroup.scale.set(1,1,1);dogGroup.rotation.z=0}}renderer.render(scene,camera)}animate(performance.now());
+</script>
+</body>
+</html>
