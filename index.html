@@ -2,59 +2,61 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>It's a Dog's World — Hunyuan3D</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>It's a Dog's World — TRELLIS.2</title>
 <style>
-:root{--ink:#243224;--muted:#647064;--panel:#ffffffd9;--line:#d8e4d5;--shadow:0 18px 50px rgba(37,67,37,.14)}
+:root{--ink:#243224;--muted:#647064;--panel:#ffffffdc;--line:#d8e4d5;--shadow:0 18px 50px rgba(37,67,37,.14)}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:ui-rounded,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}
 body{background:linear-gradient(#ccecff 0 42%,#9fd075 42% 100%)}
-.wrap{max-width:1320px;margin:auto;padding:24px 18px 34px}h1{margin:0;font-size:clamp(30px,5vw,56px);letter-spacing:-.04em}.sub{max-width:900px;line-height:1.5;color:#425442;margin:8px 0 18px}
-.top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}.pill{background:#fffbd9;border:1px solid #eadf9c;border-radius:999px;padding:8px 12px;font-size:12px}.pill strong{font-weight:700}
-.grid{display:grid;grid-template-columns:260px 1fr;gap:16px}@media(max-width:850px){.grid{grid-template-columns:1fr}}
-.panel{background:var(--panel);backdrop-filter:blur(12px);border:1px solid #ffffffbb;border-radius:22px;box-shadow:var(--shadow)}
-.side{padding:16px}.label{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin:2px 0 8px}.side p{font-size:13px;line-height:1.45;color:#4d604d}.note{background:#fffbe8;border:1px solid #eadca7;border-radius:14px;padding:12px;margin-top:14px;transform:rotate(.7deg)}.note input,.note textarea{width:100%;border:0;outline:none;background:transparent;font:inherit;color:#4c4737}.note input{font-size:12px;font-weight:700;margin-bottom:7px}.note textarea{min-height:110px;resize:vertical;font-size:13px}.privacy{font-size:10px;color:#8c8262;margin-top:5px}
+.wrap{max-width:1380px;margin:auto;padding:18px 14px 28px}h1{margin:0;font-size:clamp(30px,6vw,58px);letter-spacing:-.04em}.sub{max-width:920px;line-height:1.5;color:#425442;margin:8px 0 16px}
+.top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}.pill{background:#fffbd9;border:1px solid #eadf9c;border-radius:999px;padding:8px 11px;font-size:12px}.pill strong{font-weight:700}
+.grid{display:grid;grid-template-columns:250px 1fr;gap:14px}@media(max-width:820px){.grid{grid-template-columns:1fr}.side{order:2}.frameWrap{order:1}}
+.panel{background:var(--panel);backdrop-filter:blur(12px);border:1px solid #ffffffbb;border-radius:20px;box-shadow:var(--shadow)}
+.side{padding:14px}.label{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin:2px 0 8px}.side p{font-size:13px;line-height:1.45;color:#4d604d;margin:8px 0}.note{background:#fffbe8;border:1px solid #eadca7;border-radius:14px;padding:12px;margin-top:12px;transform:rotate(.7deg)}.note input,.note textarea{width:100%;border:0;outline:none;background:transparent;font:inherit;color:#4c4737}.note input{font-size:12px;font-weight:700;margin-bottom:7px}.note textarea{min-height:92px;resize:vertical;font-size:13px}.privacy{font-size:10px;color:#8c8262;margin-top:5px}
 .open{display:block;text-align:center;text-decoration:none;background:#29432b;color:white;border-radius:12px;padding:11px 12px;margin-top:12px;font-weight:700}
-.frameWrap{overflow:hidden;min-height:820px;background:white}.frameWrap iframe{display:block;width:100%;height:820px;border:0;background:white}
-.warning{font-size:12px;color:#5d6f5d;margin-top:10px;line-height:1.4}.footer{font-size:12px;color:#566756;margin-top:14px}
+.frameWrap{overflow:hidden;min-height:850px;background:white}.frameWrap iframe{display:block;width:100%;height:850px;border:0;background:white}
+.warning{font-size:12px;color:#5d6f5d;margin-top:10px;line-height:1.4}.footer{font-size:12px;color:#566756;margin-top:12px}
+@media(max-width:820px){.wrap{padding:12px 8px 24px}.frameWrap{min-height:900px;border-radius:16px}.frameWrap iframe{height:900px}.side{border-radius:16px}.sub{font-size:14px}.pill{font-size:11px}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>It's a Dog's World</h1>
-  <p class="sub">This version uses Tencent's real Hunyuan3D-2.1 browser Space for image-to-3D generation. Upload your dog drawing inside the generator, use background removal for white paper, and generate the textured 3D asset there.</p>
+  <p class="sub">Use the real Microsoft TRELLIS.2 image-to-3D generator directly in this browser. Upload your dog drawing, generate the textured 3D asset, and export the GLB when you like the result.</p>
   <div class="top">
-    <div class="pill"><strong>Real model:</strong> Hunyuan3D-2.1</div>
-    <div class="pill"><strong>Input:</strong> dog drawing / white paper</div>
-    <div class="pill"><strong>Output:</strong> 3D mesh + texture</div>
+    <div class="pill"><strong>Real model:</strong> Microsoft TRELLIS.2</div>
+    <div class="pill"><strong>Works on:</strong> phone / tablet / desktop</div>
+    <div class="pill"><strong>Output:</strong> textured GLB</div>
   </div>
   <div class="grid">
     <aside class="panel side">
-      <div class="label">How to use</div>
-      <p>1. Upload your dog drawing in the Hunyuan panel.</p>
-      <p>2. Turn on <b>Remove Background</b> for drawings photographed on white paper.</p>
-      <p>3. Use the full generation option when you want texture, not just shape.</p>
-      <p>4. Download the GLB when it finishes. That GLB is what we'll later drop into your globe and give a safe idle.</p>
+      <div class="label">For your drawings</div>
+      <p>1. Upload the dog drawing in the TRELLIS panel.</p>
+      <p>2. White paper is okay — TRELLIS.2 preprocesses the image and its pipeline includes background removal.</p>
+      <p>3. Start at <b>512</b> resolution on mobile for faster testing.</p>
+      <p>4. Tap <b>Generate</b>, inspect the 3D result, then <b>Extract GLB</b>.</p>
+      <p>5. If the first shape drifts from your drawing, regenerate with another seed instead of “fixing” the drawing.</p>
 
       <div class="note">
         <input id="date" aria-label="Date" />
         <textarea id="note" placeholder="Private note…"></textarea>
-        <div class="privacy">Stored only in this browser. Not sent to Hunyuan.</div>
+        <div class="privacy">Stored only in this browser. Never sent to TRELLIS.2.</div>
       </div>
 
-      <a class="open" href="https://huggingface.co/spaces/tencent/Hunyuan3D-2.1" target="_blank" rel="noopener">Open Hunyuan full screen</a>
-      <div class="warning">The Tencent Space runs on shared Hugging Face GPU capacity, so it can occasionally queue, sleep, or restart.</div>
+      <a class="open" href="https://huggingface.co/spaces/microsoft/TRELLIS.2" target="_blank" rel="noopener">Open TRELLIS.2 full screen</a>
+      <div class="warning">The official Microsoft Space runs on shared Hugging Face compute, so generation can occasionally queue or restart.</div>
     </aside>
 
     <main class="panel frameWrap">
       <iframe
-        src="https://tencent-hunyuan3d-2-1.hf.space/?__theme=light"
-        title="Tencent Hunyuan3D-2.1"
-        allow="clipboard-read; clipboard-write; fullscreen"
+        src="https://microsoft-trellis-2.hf.space/?__theme=light"
+        title="Microsoft TRELLIS.2 image to 3D"
+        allow="clipboard-read; clipboard-write; fullscreen; camera"
         loading="eager">
       </iframe>
     </main>
   </div>
-  <div class="footer">Next step after generation works reliably: automatically capture the returned GLB and place it into your dog globe with an idle chosen from the model's geometry.</div>
+  <div class="footer">This page is the live browser playground. No local install or zip file is required.</div>
 </div>
 <script>
 const date=document.getElementById('date'),note=document.getElementById('note');
